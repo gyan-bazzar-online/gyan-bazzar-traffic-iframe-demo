@@ -2,6 +2,10 @@
 
 A new Flutter project.
 
+## Known Issue:
+
+Have a look at [this issue](https://github.com/flutter/flutter/issues/30368) for error ERR_CLEARTEXT_NOT_PERMITTED.
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
