@@ -1,27 +1,23 @@
 class User {
-  int id;
   String name;
-  String token;
+  String mobile_number;
 
   User({
-    required this.id,
     required this.name,
-    required this.token,
+    required this.mobile_number,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'],
       name: json['name'],
-      token: json['token'],
+      mobile_number: json['mobile_number'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'name': name,
-      'token': token,
+      'mobile_number': mobile_number,
     };
   }
 }

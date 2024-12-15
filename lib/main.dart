@@ -2,13 +2,16 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:gyan_traffic_flutter_app/api_controller.dart';
 import 'package:gyan_traffic_flutter_app/user.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 WebViewEnvironment? webViewEnvironment;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Permission.camera.request();
+  await Permission.microphone.request();
 
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
     final availableVersion = await WebViewEnvironment.getAvailableVersion();
@@ -28,9 +31,12 @@ Future<void> main() async {
   }
 
   try {
-    User? user = await ApiController().authenticate();
-    
-    print(user?.toJson());
+    User user = User.fromJson({
+      "name": "John Doe",
+      "mobile_number": "9876543222",
+    });
+
+    print(user.toJson());
 
     runApp(
       MaterialApp(
@@ -49,15 +55,14 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key, this.user});
+  const MyApp({super.key, required this.user});
 
-  final User? user;
+  final User user;
 
   @override
   Widget build(BuildContext context) {
-    final String token = user?.token ?? '';
     final String initialUrl =
-        "https://traffic.gyancommunity.com/api/initiate?token=$token";
+        "https://traffic.gyancommunity.com/api/nagarik-class-initiate?mobile_number=${user.mobile_number}&name=${user.name}";
 
     print(initialUrl);
 
@@ -66,7 +71,7 @@ class MyApp extends StatelessWidget {
         title: const Text("Gyan Traffic Demo"),
       ),
       body: SafeArea(
-        child: user == null ? Text("No user found!") : _buildWebView(initialUrl),
+        child: _buildWebView(initialUrl),
       ),
     );
   }
@@ -81,6 +86,13 @@ class MyApp extends StatelessWidget {
         },
         onProgressChanged: (controller, progress) {
           // Handle progress if necessary
+        },
+        onPermissionRequest: (InAppWebViewController controller,
+            PermissionRequest permissionRequest) async {
+          return PermissionResponse(
+            resources: permissionRequest.resources,
+            action: PermissionResponseAction.GRANT,
+          );
         },
       );
     } else {
