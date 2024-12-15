@@ -81,7 +81,9 @@ class MyApp extends StatelessWidget {
         defaultTargetPlatform == TargetPlatform.iOS) {
       return InAppWebView(
         initialUrlRequest: URLRequest(url: WebUri(initialUrl)),
-        onWebViewCreated: (controller) {
+        onWebViewCreated: (controller) async {
+          await controller.setCameraCaptureState(state: MediaCaptureState.ACTIVE);
+          await controller.setMicrophoneCaptureState(state: MediaCaptureState.ACTIVE);
           // Additional controller setup can go here
         },
         onProgressChanged: (controller, progress) {
